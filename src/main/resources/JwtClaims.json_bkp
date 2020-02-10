@@ -1,0 +1,19 @@
+{
+  "iss": "https://savasoft.com.br",
+  "jti": "a-123",
+  "sub": "sava-using-jwt-rbac",
+  "upn": "danielsavas@gmail.com",
+  "preferred_username": "sava",
+  "aud": "using-jwt-rbac",
+  "birthdate": "1981-10-11",
+  "roleMappings": {
+    "group1": "Group1MappedRole",
+    "group2": "Group2MappedRole"
+  },
+  "groups": [
+    "Echoer",
+    "Tester",
+    "Subscriber",
+    "group2"
+  ]
+}

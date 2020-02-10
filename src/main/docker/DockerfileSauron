@@ -1,0 +1,43 @@
+# openjdk:8 (official docker); oracle/openjdk:8 (official oracle); store/oracle/serverjre:8 (envio-manual)
+FROM openjdk:8
+
+# Teste commit
+MAINTAINER Daniel Sava Pupak
+
+ENV ACTIVEMQ_BROKER_URL tcp://activemq:61616
+ENV ACTIVEMQ_FILA_ENTREGAS_RECEBIDAS colareEntregasRecebidas
+
+ENV AMBIENTE homologacao
+
+ENV PROCESSAR_FILA true
+
+RUN mkdir /opt/certs
+
+ADD sauron-swarm.jar /opt/sauron-swarm.jar
+
+EXPOSE 8080
+
+#  Inside Linux containers,
+#  recent versions of OpenJDK 8 can correctly detect container-limited number of CPU cores by default.
+#  To enable the detection of container-limited amount of RAM the following options can be used:
+#   -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+
+ENV JAVA_OPTS -server \
+    -Xms512M \
+    -Xmx5120M \
+    -Duser.timezone=Brazil/East \
+    -Duser.language=pt \
+    -Duser.country=BR \
+    -XX:NewRatio=3 \
+    -XX:MinHeapFreeRatio=40 \
+    -XX:MaxHeapFreeRatio=70 \
+    -XX:+UseParallelGC \
+    -XX:+AggressiveOpts  \
+    -XX:SurvivorRatio=8 \
+    -XX:MaxTenuringThreshold=15 \
+    -XX:ObjectAlignmentInBytes=16 \
+    -XX:+UseCompressedOops \
+    -Djava.net.preferIPv4Stack=true \
+    -Djavax.net.ssl.trustStore=/opt/certs/tcm.go.gov.br.truststore
+
+ENTRYPOINT java $JAVA_OPTS -Dswarm.project.stage=$AMBIENTE -jar /opt/sauron-swarm.jar
